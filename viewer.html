@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dereck Boatwright – Resume</title>
+<meta name="robots" content="noindex,nofollow">
+<title>Document preview</title>
 <style>
   html, body { margin: 0; background: #ececec; font-family: Inter, system-ui, sans-serif; }
   #pages { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px; }
@@ -13,11 +14,13 @@
 </style>
 </head>
 <body>
-<div id="msg">Loading resume…</div>
+<div id="msg">Loading…</div>
 <div id="pages"></div>
 <script src="vendor/pdf.min.js"></script>
 <script>
   var PDF_URL = "Dereck_Boatwright_Resume.pdf";
+  var q = new URLSearchParams(location.search).get("f");
+  if (q && /^[A-Za-z0-9_\-\/]+\.pdf$/.test(q) && q.indexOf("..") < 0 && q.charAt(0) !== "/") PDF_URL = q;
   var msg = document.getElementById("msg");
   var pages = document.getElementById("pages");
   function fallback() {
