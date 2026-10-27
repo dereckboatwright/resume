@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dereck Boatwright – Resume</title>
+<style>
+  html, body { margin: 0; background: #ececec; font-family: Inter, system-ui, sans-serif; }
+  #pages { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 12px; }
+  canvas { width: 100%; max-width: 820px; height: auto; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.18); }
+  #msg { text-align: center; padding: 32px 16px; color: #333; font-size: 14px; }
+  #msg a { color: #0c0407; font-weight: 600; }
+</style>
+</head>
+<body>
+<div id="msg">Loading resume…</div>
+<div id="pages"></div>
+<script src="vendor/pdf.min.js"></script>
+<script>
+  var PDF_URL = "Dereck_Boatwright_Resume.pdf";
+  var msg = document.getElementById("msg");
+  var pages = document.getElementById("pages");
+  function fallback() {
+    msg.innerHTML = 'Preview unavailable. <a href="' + PDF_URL + '" target="_blank" rel="noopener">Open the PDF</a>.';
+  }
+  try {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = "vendor/pdf.worker.min.js";
+    pdfjsLib.getDocument(PDF_URL).promise.then(function (pdf) {
+      msg.style.display = "none";
+      var chain = Promise.resolve();
+      for (var n = 1; n <= pdf.numPages; n++) {
+        (function (num) {
+          chain = chain.then(function () {
+            return pdf.getPage(num).then(function (page) {
+              var scale = Math.min(2.5, Math.max(1.5, (window.devicePixelRatio || 1) * 1.5));
+              var viewport = page.getViewport({ scale: scale });
+              var canvas = document.createElement("canvas");
+              canvas.width = viewport.width;
+              canvas.height = viewport.height;
+              pages.appendChild(canvas);
+              return page.render({ canvasContext: canvas.getContext("2d"), viewport: viewport }).promise;
+            });
+          });
+        })(n);
+      }
+      return chain;
+    }).catch(fallback);
+  } catch (e) { fallback(); }
+</script>
+</body>
+</html>
